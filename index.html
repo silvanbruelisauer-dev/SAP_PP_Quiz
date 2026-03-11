@@ -400,6 +400,551 @@ const DATA = [
         ]
       }
     ]
+  },
+
+  // ── MRP ──────────────────────────────────────────────────────────────────
+  {
+    id: "mrp",
+    focusArea: "MRP",
+    icon: "🔄",
+    topics: [
+      {
+        id: "mrp-basics",
+        title: "MRP Basics & the Planning Run",
+        explanation: `MRP (Material Requirements Planning) calculates what to produce or procure, in what quantity, and by when — based on demand, stock levels, and lead times. The main planning run transactions are MD01 (total planning) and MD02 (single-item, multi-level).\n\nMRP reads demand (PIRs, sales orders, dependent requirements), checks available stock and open receipts, and generates planned orders or purchase requisitions to cover any shortage. The planning horizon and MRP type on the material master control the behaviour.`,
+        questions: [
+          {
+            text: "Which transaction runs MRP for a single material across all BOM levels?",
+            options: ["MD01","MD02","MD04","CO41"],
+            correct: 1
+          },
+          {
+            text: "What does MRP use to determine the net requirement for a material?",
+            options: [
+              "Open purchase orders only",
+              "Gross requirement minus available stock and open receipts",
+              "Safety stock level only",
+              "The production order confirmation history"
+            ],
+            correct: 1
+          },
+          {
+            text: "Where is the MRP type for a material maintained?",
+            options: ["Work center master","Routing header","Material master MRP 1 view","Production version"],
+            correct: 2
+          }
+        ]
+      },
+      {
+        id: "mrp-types-lot-sizing",
+        title: "MRP Types & Lot Sizing",
+        explanation: `The MRP type controls how and when MRP plans a material. Common types: PD (standard MRP), VB (reorder point planning), ND (no planning). Lot sizing procedures determine how MRP groups requirements into planned orders — e.g. EX (lot-for-lot), FX (fixed quantity), MB (monthly lot size).\n\nLot sizing has a direct impact on inventory levels and production frequency. Lot-for-lot minimises stock but increases order frequency; fixed lot sizes simplify production but can cause excess inventory.`,
+        questions: [
+          {
+            text: "Which MRP type uses a reorder point to trigger replenishment, independent of MRP run?",
+            options: ["PD","ND","VB","EX"],
+            correct: 2
+          },
+          {
+            text: "A material uses lot sizing procedure EX. How does MRP create planned orders?",
+            options: [
+              "One large order covering the full planning horizon",
+              "Fixed quantity regardless of actual demand",
+              "Exactly matching each individual requirement — lot for lot",
+              "Rounded up to the nearest pallet quantity"
+            ],
+            correct: 2
+          },
+          {
+            text: "What is the main trade-off when using a large fixed lot size (FX)?",
+            options: [
+              "Higher planning complexity, lower inventory",
+              "Simpler production scheduling but potential excess inventory",
+              "Faster MRP runtime but inaccurate requirements",
+              "Lower procurement cost but higher scrap rate"
+            ],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "mrp-exception-messages",
+        title: "Exception Messages & MRP Results",
+        explanation: `After an MRP run, exception messages highlight situations that need planner attention. Common messages: 'Reschedule in' (receipt exists but needs to move earlier), 'Reschedule out' (receipt can be delayed), 'Cancel' (receipt no longer needed), 'New' (new planned order created).\n\nThe stock/requirements list (MD04) is the main tool for reviewing MRP results. It shows all demand and supply elements in date sequence. Planners should work through exception messages daily rather than letting them accumulate.`,
+        questions: [
+          {
+            text: "What does the MRP exception message 'Reschedule in' mean?",
+            options: [
+              "A new planned order needs to be created",
+              "An existing receipt should be moved to an earlier date to cover a shortage",
+              "A planned order should be cancelled",
+              "Safety stock has been breached"
+            ],
+            correct: 1
+          },
+          {
+            text: "Which transaction shows the stock/requirements list for a material?",
+            options: ["CO01","MD04","CM01","MB52"],
+            correct: 1
+          },
+          {
+            text: "A purchase requisition has a 'Cancel' exception message. What does this indicate?",
+            options: [
+              "The vendor has rejected the order",
+              "The material is below safety stock",
+              "The requirement it was created for no longer exists",
+              "The lead time has changed"
+            ],
+            correct: 2
+          }
+        ]
+      }
+    ]
+  },
+
+  // ── Production Orders ────────────────────────────────────────────────────
+  {
+    id: "production-orders",
+    focusArea: "Production Orders",
+    icon: "🏭",
+    topics: [
+      {
+        id: "prod-order-lifecycle",
+        title: "Production Order Lifecycle",
+        explanation: `A production order moves through defined statuses: Created → Released → Partially Confirmed → Confirmed (TECO) → Closed (settled). Key status transitions:\n\n- Release (CO02): enables goods issue and confirmations\n- TECO (Technically Complete): closes the order for further postings, triggers final settlement\n- Settlement: transfers production variances to the cost centre or material\n\nUnderstanding order status is critical — many transactions are blocked until the order reaches the right status.`,
+        questions: [
+          {
+            text: "What must happen before goods can be issued to a production order?",
+            options: [
+              "The order must be settled",
+              "The order must be released",
+              "A confirmation must be posted",
+              "The BOM must be re-exploded"
+            ],
+            correct: 1
+          },
+          {
+            text: "What is the purpose of setting a production order to TECO?",
+            options: [
+              "It converts the order back to a planned order",
+              "It closes the order for further goods movements and triggers final settlement",
+              "It automatically posts a goods receipt",
+              "It cancels all open reservations and purchase orders"
+            ],
+            correct: 1
+          },
+          {
+            text: "Which transaction is used to release and edit a production order?",
+            options: ["CO01","CO02","CO11N","CO15"],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "goods-issue-receipt",
+        title: "Goods Issue & Goods Receipt",
+        explanation: `Goods Issue (GI) to a production order consumes components from stock and reduces reservations. Transaction MB1A or via CO27 (collective GI). Movement type 261 is the standard GI to production.\n\nGoods Receipt (GR) for a finished product is posted via MB31 or CO15. Movement type 101 receives the finished goods into stock and credits the production order. The GR quantity drives the cost calculation and determines whether the order is over- or under-delivered.`,
+        questions: [
+          {
+            text: "Which movement type is used for a goods issue to a production order?",
+            options: ["101","261","551","601"],
+            correct: 1
+          },
+          {
+            text: "What happens to component reservations when a goods issue is posted to a production order?",
+            options: [
+              "Reservations increase",
+              "Reservations are converted to purchase orders",
+              "Reservations are reduced or cleared",
+              "Reservations are transferred to the next order"
+            ],
+            correct: 2
+          },
+          {
+            text: "Which transaction is used to post the goods receipt for a production order?",
+            options: ["MIGO","MB31","CO11N","CO02"],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "order-settlement",
+        title: "Order Settlement & Variances",
+        explanation: `Production order settlement transfers the cost difference between actual costs (materials, labour, overhead) and the standard cost of the goods receipt to a variance account or cost centre. This happens via CO88 (collective settlement) or KO88 (individual).\n\nVariances arise when actual consumption or time differs from the standard. Common causes: scrap, rework, price differences on materials, routing deviations. Understanding variances is key for cost control in manufacturing.`,
+        questions: [
+          {
+            text: "What does production order settlement do?",
+            options: [
+              "Posts a goods receipt for finished goods",
+              "Transfers cost variances from the order to a variance account or cost centre",
+              "Converts planned costs to actual costs automatically",
+              "Closes the order and deletes it from the system"
+            ],
+            correct: 1
+          },
+          {
+            text: "Which transaction runs collective settlement for production orders?",
+            options: ["CO88","KO88","CO02","MB31"],
+            correct: 0
+          },
+          {
+            text: "A production order shows a large positive variance. What is the most likely cause?",
+            options: [
+              "More components were consumed than the BOM specifies",
+              "The order was settled too early",
+              "The routing has no work centres assigned",
+              "MRP created too many planned orders"
+            ],
+            correct: 0
+          }
+        ]
+      }
+    ]
+  },
+
+  // ── Confirmations ────────────────────────────────────────────────────────
+  {
+    id: "confirmations",
+    focusArea: "Confirmations",
+    icon: "✅",
+    topics: [
+      {
+        id: "what-is-confirmation",
+        title: "What is a Confirmation?",
+        explanation: `A confirmation reports the actual progress of a production order operation. It records: quantities produced (yield / scrap), actual time spent (machine time, labour time), and the operation status. Transaction CO11N is used for individual operation confirmations; CO15 for order-level confirmations.\n\nConfirmations are the bridge between planning and actuals — they update order costs, trigger automatic goods movements (if configured), and feed capacity actuals back to the work centre.`,
+        questions: [
+          {
+            text: "What does a production order confirmation record?",
+            options: [
+              "The planned cost of the order",
+              "Actual quantities produced, scrap, and time spent on operations",
+              "The goods receipt of finished products only",
+              "The conversion of planned orders to production orders"
+            ],
+            correct: 1
+          },
+          {
+            text: "Which transaction is used for individual operation confirmations?",
+            options: ["CO15","CO11N","CO02","MB31"],
+            correct: 1
+          },
+          {
+            text: "What happens to production order costs when a confirmation is posted?",
+            options: [
+              "Planned costs are deleted",
+              "Actual costs are updated based on confirmed quantities and times",
+              "The order is automatically settled",
+              "Nothing — costs are only updated at goods receipt"
+            ],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "partial-final-confirmation",
+        title: "Partial vs. Final Confirmation",
+        explanation: `A partial confirmation reports progress on an operation without closing it — used when production spans multiple shifts or days. A final confirmation marks the operation as complete (status CNF) and closes it for further confirmations.\n\nIf you post a final confirmation with a yield that differs from the order quantity, the system creates an under- or over-delivery. Always check whether a final confirmation triggers automatic goods receipt — this depends on the control key in the routing.`,
+        questions: [
+          {
+            text: "What is the key difference between a partial and a final confirmation?",
+            options: [
+              "Partial confirmations post a goods receipt; final ones do not",
+              "A final confirmation closes the operation and prevents further confirmations",
+              "Partial confirmations update costs; final ones do not",
+              "There is no functional difference — both close the operation"
+            ],
+            correct: 1
+          },
+          {
+            text: "A final confirmation is posted with a yield lower than the order quantity. What is the result?",
+            options: [
+              "The order is automatically cancelled",
+              "The system creates an under-delivery and the order remains open for a follow-up GR",
+              "MRP immediately creates a new planned order to cover the shortfall",
+              "The order is set to TECO automatically"
+            ],
+            correct: 1
+          },
+          {
+            text: "Where is the automatic goods receipt on final confirmation controlled?",
+            options: [
+              "Material master MRP 3 view",
+              "Work centre master data",
+              "Control key in the routing operation",
+              "Production scheduler profile"
+            ],
+            correct: 2
+          }
+        ]
+      },
+      {
+        id: "backflushing",
+        title: "Backflushing",
+        explanation: `Backflushing is an automatic goods issue triggered by a confirmation. Instead of manually issuing components before production, the system posts the GI automatically when the confirmation is saved — based on the BOM quantities.\n\nBackflushing is activated on the material master (MRP 2 view) or on the routing operation. It reduces transaction effort but requires accurate BOMs and low scrap rates. If actual consumption differs from the BOM, backflushing creates inventory inaccuracies that require manual correction.`,
+        questions: [
+          {
+            text: "What does backflushing automate in the production process?",
+            options: [
+              "The conversion of planned orders to production orders",
+              "The automatic goods issue of components when a confirmation is posted",
+              "The settlement of production order variances",
+              "The creation of capacity requirements"
+            ],
+            correct: 1
+          },
+          {
+            text: "Where can backflushing be activated for a component?",
+            options: [
+              "Sales order item category",
+              "Material master MRP 2 view",
+              "Work centre formula",
+              "Cost centre master"
+            ],
+            correct: 1
+          },
+          {
+            text: "What is the main risk of using backflushing?",
+            options: [
+              "It increases the number of planned orders",
+              "It prevents final confirmations from being posted",
+              "Inventory inaccuracies if actual consumption differs from BOM quantities",
+              "It disables capacity requirements planning"
+            ],
+            correct: 2
+          }
+        ]
+      }
+    ]
+  },
+
+  // ── SD–PP Integration ────────────────────────────────────────────────────
+  {
+    id: "sd-pp-integration",
+    focusArea: "SD–PP Integration",
+    icon: "🔗",
+    topics: [
+      {
+        id: "sales-orders-as-demand",
+        title: "Sales Orders as Demand in MRP",
+        explanation: `In make-to-stock (MTS) planning, demand typically comes from PIRs (Planned Independent Requirements). In make-to-order (MTO), demand comes directly from sales order line items — MRP plans specifically for that sales order and the stock is reserved for it.\n\nThe requirements type on the sales order (determined via MRP type and strategy group on the material master) controls how the sales order interacts with MRP. Strategy 10 = pure MTS (PIR-driven), Strategy 20 = MTO (sales order drives production directly).`,
+        questions: [
+          {
+            text: "In a make-to-order scenario, what drives MRP to create a planned order?",
+            options: [
+              "A Planned Independent Requirement (PIR)",
+              "A sales order line item",
+              "A reorder point breach",
+              "A manual planner entry in MD04"
+            ],
+            correct: 1
+          },
+          {
+            text: "Which planning strategy uses PIRs as the primary demand driver?",
+            options: [
+              "Strategy 20 (Make-to-Order)",
+              "Strategy 10 (Make-to-Stock)",
+              "Strategy 40 (Planning with final assembly)",
+              "Strategy 52 (Planning without final assembly)"
+            ],
+            correct: 1
+          },
+          {
+            text: "What happens to a PIR when a sales order is created in a make-to-stock strategy?",
+            options: [
+              "The PIR is deleted",
+              "The PIR is consumed (reduced) by the sales order demand",
+              "The PIR is converted to a production order",
+              "The PIR remains unchanged — sales orders have no effect on PIRs"
+            ],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "atp-availability-check",
+        title: "ATP & Availability Check",
+        explanation: `ATP (Available-to-Promise) is the availability check performed by SD when a sales order is created or changed. It checks whether the requested quantity can be delivered on the requested date based on current stock, open production orders, and open purchase orders.\n\nThe checking rule and checking group (on the material master Sales/MRP views) control what is included in the ATP check. If ATP fails, the system proposes the next available date. In PP, production orders and planned orders can be included in the ATP scope to give more realistic availability dates.`,
+        questions: [
+          {
+            text: "What is the purpose of the ATP check in SD?",
+            options: [
+              "To confirm that a production order has been released",
+              "To check if a requested quantity can be delivered on a requested date",
+              "To verify that a customer has a valid credit limit",
+              "To trigger MRP for the relevant material"
+            ],
+            correct: 1
+          },
+          {
+            text: "Where is the checking group for the ATP check maintained?",
+            options: [
+              "Customer master",
+              "Sales order header",
+              "Material master (MRP or Sales views)",
+              "Work centre master"
+            ],
+            correct: 2
+          },
+          {
+            text: "A sales order ATP check fails for the requested delivery date. What does SAP propose?",
+            options: [
+              "It cancels the sales order automatically",
+              "It proposes the next date on which the quantity will be available",
+              "It creates an emergency production order",
+              "It reduces the order quantity to match available stock"
+            ],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "transfer-of-requirements",
+        title: "Transfer of Requirements & Consumption",
+        explanation: `Transfer of Requirements (TOR) ensures that sales order demand is passed to MRP. The requirements are visible in MD04 and drive planning. In MTS, PIRs are consumed by sales orders — once a sales order arrives, the corresponding PIR quantity is reduced so MRP does not plan double.\n\nConsumption mode and consumption period (set on the material master MRP 3 view) control how backward and forward consumption works. Incorrect consumption settings are a common cause of over-planning or stock build-up.`,
+        questions: [
+          {
+            text: "What is the purpose of PIR consumption in a make-to-stock scenario?",
+            options: [
+              "To delete PIRs after production is complete",
+              "To prevent MRP from planning double once a real sales order arrives",
+              "To convert PIRs into purchase requisitions",
+              "To update the safety stock level"
+            ],
+            correct: 1
+          },
+          {
+            text: "Where are consumption mode and consumption period maintained?",
+            options: [
+              "Sales order item",
+              "Material master MRP 3 view",
+              "Routing header",
+              "Customer master purchasing view"
+            ],
+            correct: 1
+          },
+          {
+            text: "A material consistently builds up excess stock despite accurate sales forecasting. What is the most likely configuration issue?",
+            options: [
+              "The routing has too many operations",
+              "The consumption period is too narrow — sales orders are not consuming PIRs correctly",
+              "The work centre efficiency factor is too high",
+              "The BOM has incorrect component quantities"
+            ],
+            correct: 1
+          }
+        ]
+      }
+    ]
+  },
+
+  // ── WM & Logistics Execution ─────────────────────────────────────────────
+  {
+    id: "wm-logistics",
+    focusArea: "WM & Logistics Execution",
+    icon: "📦",
+    topics: [
+      {
+        id: "wm-basics-pp",
+        title: "WM Basics in the PP Context",
+        explanation: `Warehouse Management (WM) in SAP manages stock at storage bin level within a warehouse structure (Warehouse Number → Storage Type → Storage Section → Storage Bin). For PP, WM is relevant when components need to be picked from bins and delivered to production supply areas.\n\nWhen WM is active, a goods issue in PP creates a transfer requirement (TR), which is then converted into a transfer order (TO) for physical movement. The production supply area (PSA) is the staging area where components are placed before consumption.`,
+        questions: [
+          {
+            text: "In SAP WM, what is the correct hierarchy from highest to lowest level?",
+            options: [
+              "Storage Bin → Storage Section → Storage Type → Warehouse Number",
+              "Warehouse Number → Storage Type → Storage Section → Storage Bin",
+              "Plant → Warehouse Number → Storage Bin → Storage Type",
+              "Storage Section → Warehouse Number → Storage Type → Storage Bin"
+            ],
+            correct: 1
+          },
+          {
+            text: "When WM is active, what does a goods issue posting for a production order create in WM?",
+            options: [
+              "A purchase requisition",
+              "A transfer requirement (TR)",
+              "A delivery note",
+              "A production version"
+            ],
+            correct: 1
+          },
+          {
+            text: "What is a Production Supply Area (PSA) in SAP WM?",
+            options: [
+              "A storage type used exclusively for finished goods",
+              "The staging area where components are placed before being consumed by production",
+              "A warehouse zone reserved for hazardous materials",
+              "A bin type used for bulk storage"
+            ],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "transfer-orders",
+        title: "Transfer Orders & Stock Movements",
+        explanation: `A Transfer Order (TO) is the WM execution document that instructs a warehouse worker to move stock from one bin to another. TOs are created from transfer requirements (TRs) or directly. Transaction LT01 creates manual TOs; LT0A creates TOs from TRs.\n\nConfirming a TO (LT12) updates the bin stock in WM. Until the TO is confirmed, the stock is in a "transfer" status and may not be visible as available depending on WM configuration. For PP, TOs are typically triggered automatically when components are staged for production.`,
+        questions: [
+          {
+            text: "What is the WM document that physically instructs a warehouse worker to move stock?",
+            options: [
+              "Transfer Requirement (TR)",
+              "Delivery Note",
+              "Transfer Order (TO)",
+              "Posting Change Notice"
+            ],
+            correct: 2
+          },
+          {
+            text: "Which transaction is used to confirm a transfer order in WM?",
+            options: ["LT01","LT0A","LT12","LT21"],
+            correct: 2
+          },
+          {
+            text: "What is the status of stock that has a transfer order created but not yet confirmed?",
+            options: [
+              "Unrestricted use stock",
+              "Stock in transfer — not yet at the destination bin",
+              "Blocked stock",
+              "Consignment stock"
+            ],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "lean-wm-delivery",
+        title: "Lean WM & Outbound Delivery to Production",
+        explanation: `Lean WM (also called Warehouse Management without Storage Bins, or IM-WM integration) is a simplified approach used when full WM bin management is not needed but staging and replenishment of production supply areas still needs to be tracked.\n\nIn SD–WM integration, outbound deliveries from a warehouse to a customer are processed via the Delivery (VL01N) and then picked using WM transfer orders. The goods issue on the delivery (VL02N) is the final step that reduces stock and updates the sales order status. For internal production supply, replenishment TOs keep the PSA stocked.`,
+        questions: [
+          {
+            text: "In SD–WM integration, what triggers the WM picking process for a customer delivery?",
+            options: [
+              "Posting a goods issue in MIGO",
+              "Creating an outbound delivery (VL01N) from a sales order",
+              "Running MRP for the finished product",
+              "Confirming a production order operation"
+            ],
+            correct: 1
+          },
+          {
+            text: "Which transaction is used to post the goods issue for an outbound delivery?",
+            options: ["VL01N","VL02N","MB1A","CO15"],
+            correct: 1
+          },
+          {
+            text: "What is the effect of posting a goods issue on an outbound delivery?",
+            options: [
+              "It creates a purchase order for replenishment",
+              "It reduces stock, updates the delivery status, and triggers billing relevance",
+              "It creates a transfer requirement in WM",
+              "It releases the production order for the next batch"
+            ],
+            correct: 1
+          }
+        ]
+      }
+    ]
   }
 ];
 
