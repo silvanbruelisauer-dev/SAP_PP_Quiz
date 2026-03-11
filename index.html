@@ -10,8 +10,8 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: #0f1117;
-    color: #e8e6e0;
+    background: #f4f6fa;
+    color: #1a1d26;
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
     display: flex;
@@ -23,7 +23,7 @@
   .container { width: 100%; max-width: 640px; }
 
   .header {
-    border-bottom: 1px solid #2a2d35;
+    border-bottom: 1px solid #dde1eb;
     padding-bottom: 20px;
     margin-bottom: 32px;
   }
@@ -32,17 +32,17 @@
     font-size: 10px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #4a90d9;
+    color: #2563eb;
     margin-bottom: 8px;
     font-weight: 500;
   }
-  .title { font-size: 22px; font-weight: 700; color: #f0ede8; letter-spacing: -0.02em; line-height: 1.2; }
-  .subtitle { font-size: 13px; color: #555; margin-top: 6px; }
+  .title { font-size: 22px; font-weight: 700; color: #0f1420; letter-spacing: -0.02em; line-height: 1.2; }
+  .subtitle { font-size: 13px; color: #8a90a0; margin-top: 6px; }
 
   .card {
-    background: #161820;
-    border: 1px solid #252830;
-    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #dde1eb;
+    border-radius: 10px;
     padding: 20px 24px;
     margin-bottom: 12px;
     cursor: pointer;
@@ -50,19 +50,20 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
-  .card:hover { background: #1c1f28; border-color: #4a90d9; }
+  .card:hover { background: #f0f4ff; border-color: #2563eb; box-shadow: 0 2px 8px rgba(37,99,235,0.1); }
   .card-icon { font-size: 24px; width: 40px; text-align: center; flex-shrink: 0; }
-  .card-icon-arrow { font-size: 18px; color: #4a90d9; width: 40px; text-align: center; flex-shrink: 0; }
-  .card-title { font-size: 15px; font-weight: 600; color: #f0ede8; }
-  .card-sub { font-size: 12px; color: #555; margin-top: 2px; }
+  .card-icon-arrow { font-size: 18px; color: #2563eb; width: 40px; text-align: center; flex-shrink: 0; }
+  .card-title { font-size: 15px; font-weight: 600; color: #0f1420; }
+  .card-sub { font-size: 12px; color: #8a90a0; margin-top: 2px; }
 
   .back {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #444;
+    color: #8a90a0;
     cursor: pointer;
     margin-bottom: 24px;
     display: inline-block;
@@ -70,22 +71,23 @@
     border: none;
     background: none;
   }
-  .back:hover { color: #888; }
+  .back:hover { color: #2563eb; }
 
   .explain-box {
-    background: #161820;
-    border: 1px solid #252830;
-    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #dde1eb;
+    border-radius: 10px;
     padding: 28px;
     margin-bottom: 20px;
     line-height: 1.8;
     font-size: 14px;
-    color: #b8b5af;
+    color: #3a3f52;
     white-space: pre-line;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
 
   .btn {
-    background: #4a90d9;
+    background: #2563eb;
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -98,11 +100,11 @@
     transition: background 0.15s;
     font-family: 'DM Sans', sans-serif;
   }
-  .btn:hover { background: #3a7bc8; }
+  .btn:hover { background: #1d4ed8; }
   .btn-secondary {
-    background: transparent;
-    color: #666;
-    border: 1px solid #2a2d35;
+    background: #ffffff;
+    color: #6b7280;
+    border: 1px solid #dde1eb;
     border-radius: 6px;
     padding: 12px 28px;
     font-size: 13px;
@@ -113,17 +115,17 @@
     font-family: 'DM Sans', sans-serif;
     transition: border-color 0.15s, color 0.15s;
   }
-  .btn-secondary:hover { color: #aaa; border-color: #444; }
+  .btn-secondary:hover { color: #2563eb; border-color: #2563eb; }
 
   .progress { display: flex; gap: 6px; margin-bottom: 24px; }
-  .pip { height: 3px; flex: 1; border-radius: 2px; background: #252830; }
-  .pip.active { background: #4a90d9; opacity: 0.6; }
-  .pip.done { background: #4a90d9; opacity: 1; }
+  .pip { height: 4px; flex: 1; border-radius: 2px; background: #dde1eb; }
+  .pip.active { background: #2563eb; opacity: 0.5; }
+  .pip.done { background: #2563eb; opacity: 1; }
 
   .question-text {
     font-size: 17px;
     font-weight: 600;
-    color: #f0ede8;
+    color: #0f1420;
     line-height: 1.5;
     margin-bottom: 24px;
     letter-spacing: -0.01em;
@@ -133,19 +135,20 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    background: #161820;
-    border: 1px solid #252830;
-    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid #dde1eb;
+    border-radius: 8px;
     padding: 14px 16px;
     margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.15s;
-    color: #b8b5af;
+    color: #3a3f52;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   }
-  .option:hover:not(.revealed) { border-color: #4a90d9; color: #f0ede8; }
-  .option.correct { background: #0d2b14; border-color: #2d7a3a; color: #6fcf7a; }
-  .option.wrong { background: #2b0d0d; border-color: #7a2d2d; color: #cf6f6f; }
-  .option.selected-pending { border-color: #4a90d9; color: #f0ede8; }
+  .option:hover:not(.revealed) { border-color: #2563eb; background: #f0f4ff; color: #0f1420; }
+  .option.correct { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
+  .option.wrong { background: #fef2f2; border-color: #ef4444; color: #b91c1c; }
+  .option.selected-pending { border-color: #2563eb; background: #f0f4ff; }
   .option.revealed { cursor: default; }
 
   .opt-label {
@@ -166,7 +169,7 @@
     font-family: 'DM Mono', monospace;
     font-size: 72px;
     font-weight: 700;
-    color: #4a90d9;
+    color: #2563eb;
     line-height: 1;
     margin-bottom: 8px;
     letter-spacing: -0.04em;
@@ -174,11 +177,11 @@
   .score-label {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
-    color: #555;
+    color: #8a90a0;
     letter-spacing: 0.15em;
     text-transform: uppercase;
   }
-  .score-msg { font-size: 16px; color: #b8b5af; margin-top: 20px; margin-bottom: 32px; line-height: 1.6; }
+  .score-msg { font-size: 16px; color: #3a3f52; margin-top: 20px; margin-bottom: 32px; line-height: 1.6; }
   .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
   .hidden { display: none; }
