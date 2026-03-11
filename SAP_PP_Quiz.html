@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SAP PP Knowledge Check</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0f1117;
+    color: #e8e6e0;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 80px;
+  }
+
+  .container { width: 100%; max-width: 640px; }
+
+  .header {
+    border-bottom: 1px solid #2a2d35;
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+  }
+  .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #4a90d9;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .title { font-size: 22px; font-weight: 700; color: #f0ede8; letter-spacing: -0.02em; line-height: 1.2; }
+  .subtitle { font-size: 13px; color: #555; margin-top: 6px; }
+
+  .card {
+    background: #161820;
+    border: 1px solid #252830;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .card:hover { background: #1c1f28; border-color: #4a90d9; }
+  .card-icon { font-size: 24px; width: 40px; text-align: center; flex-shrink: 0; }
+  .card-icon-arrow { font-size: 18px; color: #4a90d9; width: 40px; text-align: center; flex-shrink: 0; }
+  .card-title { font-size: 15px; font-weight: 600; color: #f0ede8; }
+  .card-sub { font-size: 12px; color: #555; margin-top: 2px; }
+
+  .back {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #444;
+    cursor: pointer;
+    margin-bottom: 24px;
+    display: inline-block;
+    transition: color 0.1s;
+    border: none;
+    background: none;
+  }
+  .back:hover { color: #888; }
+
+  .explain-box {
+    background: #161820;
+    border: 1px solid #252830;
+    border-radius: 8px;
+    padding: 28px;
+    margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: 14px;
+    color: #b8b5af;
+    white-space: pre-line;
+  }
+
+  .btn {
+    background: #4a90d9;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 28px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn:hover { background: #3a7bc8; }
+  .btn-secondary {
+    background: transparent;
+    color: #666;
+    border: 1px solid #2a2d35;
+    border-radius: 6px;
+    padding: 12px 28px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .btn-secondary:hover { color: #aaa; border-color: #444; }
+
+  .progress { display: flex; gap: 6px; margin-bottom: 24px; }
+  .pip { height: 3px; flex: 1; border-radius: 2px; background: #252830; }
+  .pip.active { background: #4a90d9; opacity: 0.6; }
+  .pip.done { background: #4a90d9; opacity: 1; }
+
+  .question-text {
+    font-size: 17px;
+    font-weight: 600;
+    color: #f0ede8;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #161820;
+    border: 1px solid #252830;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #b8b5af;
+  }
+  .option:hover:not(.revealed) { border-color: #4a90d9; color: #f0ede8; }
+  .option.correct { background: #0d2b14; border-color: #2d7a3a; color: #6fcf7a; }
+  .option.wrong { background: #2b0d0d; border-color: #7a2d2d; color: #cf6f6f; }
+  .option.selected-pending { border-color: #4a90d9; color: #f0ede8; }
+  .option.revealed { cursor: default; }
+
+  .opt-label {
+    font-family: 'DM Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    min-width: 20px;
+    padding-top: 1px;
+    flex-shrink: 0;
+  }
+  .opt-text { font-size: 14px; line-height: 1.5; }
+
+  .next-row { margin-top: 16px; display: flex; justify-content: flex-end; }
+
+  .score-box { text-align: center; padding: 40px 0 20px; }
+  .score-big {
+    font-family: 'DM Mono', monospace;
+    font-size: 72px;
+    font-weight: 700;
+    color: #4a90d9;
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.04em;
+  }
+  .score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .score-msg { font-size: 16px; color: #b8b5af; margin-top: 20px; margin-bottom: 32px; line-height: 1.6; }
+  .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<!-- SCREEN: Focus Area -->
+<div class="container" id="screen-focus">
+  <div class="header">
+    <div class="label">SAP PP · Knowledge Check</div>
+    <div class="title">Select a Focus Area</div>
+    <div class="subtitle">Choose a topic to study and test your knowledge</div>
+  </div>
+  <div id="focus-cards"></div>
+</div>
+
+<!-- SCREEN: Topic -->
+<div class="container hidden" id="screen-topic">
+  <div class="header">
+    <div class="label" id="topic-focus-label"></div>
+    <div class="title">Select a Topic</div>
+  </div>
+  <button class="back" onclick="showScreen('focus')">← Back</button>
+  <div id="topic-cards"></div>
+</div>
+
+<!-- SCREEN: Explanation -->
+<div class="container hidden" id="screen-explain">
+  <div class="header">
+    <div class="label" id="explain-label"></div>
+    <div class="title" id="explain-title"></div>
+  </div>
+  <button class="back" onclick="showScreen('topic')">← Back</button>
+  <div class="explain-box" id="explain-text"></div>
+  <button class="btn" onclick="startQuiz()">Start Quiz →</button>
+</div>
+
+<!-- SCREEN: Quiz -->
+<div class="container hidden" id="screen-quiz">
+  <div class="header">
+    <div class="label" id="quiz-label"></div>
+    <div class="title" id="quiz-question-num"></div>
+  </div>
+  <div class="progress">
+    <div class="pip" id="pip-0"></div>
+    <div class="pip" id="pip-1"></div>
+    <div class="pip" id="pip-2"></div>
+  </div>
+  <div class="question-text" id="quiz-question-text"></div>
+  <div id="quiz-options"></div>
+  <div class="next-row hidden" id="next-row">
+    <button class="btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+  </div>
+</div>
+
+<!-- SCREEN: Result -->
+<div class="container hidden" id="screen-result">
+  <div class="header">
+    <div class="label" id="result-label"></div>
+    <div class="title">Result</div>
+  </div>
+  <div class="score-box">
+    <div class="score-big" id="result-score"></div>
+    <div class="score-label">Correct answers</div>
+    <div class="score-msg" id="result-msg"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="startQuiz()">Retry this topic</button>
+      <button class="btn-secondary" onclick="showScreen('topic')">Other topic</button>
+      <button class="btn-secondary" onclick="showScreen('focus')">Start over</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {
+    id: "planned-orders",
+    focusArea: "Planned Orders",
+    icon: "📋",
+    topics: [
+      {
+        id: "what-is-planned-order",
+        title: "What is a Planned Order?",
+        explanation: `A planned order is a system-generated procurement proposal created by MRP. It represents a future production or procurement requirement but has no binding effect yet. Planned orders can be changed, deleted, or converted — they are purely planning objects.\n\nMRP creates them based on demand (sales orders, PIRs, dependent requirements) and the planning parameters set on the material.`,
+        questions: [
+          {
+            text: "What triggers MRP to create a planned order?",
+            options: ["A goods movement posting","A demand element such as a PIR or sales order","A manual confirmation entry","A work center capacity alert"],
+            correct: 1
+          },
+          {
+            text: "Which of the following statements about planned orders is correct?",
+            options: ["They create a reservation in the warehouse immediately","They are binding commitments to production","They can be changed or deleted without financial impact","They automatically trigger a goods receipt"],
+            correct: 2
+          },
+          {
+            text: "What is the next step after a planned order in a standard make-to-stock process?",
+            options: ["Post a goods issue","Create a purchase requisition","Convert it to a production order","Run a capacity leveling report"],
+            correct: 2
+          }
+        ]
+      },
+      {
+        id: "planned-vs-production",
+        title: "Planned Order vs. Production Order",
+        explanation: `A planned order is a flexible MRP proposal — no commitment, no cost object. A production order is the execution document: it has a cost collector, triggers capacity reservations, allows confirmations, and drives goods movements.\n\nConverting a planned order to a production order is the point where planning becomes execution. After conversion, changes have cost and logistics consequences.`,
+        questions: [
+          {
+            text: "Which object carries a cost collector in SAP PP?",
+            options: ["Planned order","PIR","Production order","Routing"],
+            correct: 2
+          },
+          {
+            text: "At what point does a capacity reservation become binding in a standard PP process?",
+            options: ["When MRP runs","When a PIR is created","When a planned order is converted to a production order","When a goods issue is posted"],
+            correct: 2
+          },
+          {
+            text: "A planner deletes a planned order by mistake. What is the impact?",
+            options: ["The production order is also deleted","A goods receipt is reversed","No financial impact — MRP will recreate it on the next run if demand still exists","The sales order is cancelled"],
+            correct: 2
+          }
+        ]
+      },
+      {
+        id: "converting-planned-orders",
+        title: "Converting Planned Orders",
+        explanation: `Conversion (transaction CO40 / CO41 for mass conversion) transforms a planned order into a production order. At this point, the order receives a cost object, components are reserved, and operations are scheduled against work centers.\n\nThe conversion date and order start date matter — scheduling runs automatically based on the routing. Always check that the routing and BOM are current before converting.`,
+        questions: [
+          {
+            text: "Which transaction is used for mass conversion of planned orders to production orders?",
+            options: ["MD04","CO40","CO41","MB1A"],
+            correct: 2
+          },
+          {
+            text: "What happens to BOM components when a planned order is converted?",
+            options: ["They are automatically issued to the shop floor","They are reserved for the production order","They are deleted from the BOM","They trigger a purchase order"],
+            correct: 1
+          },
+          {
+            text: "A planner converts a planned order but the routing has changed since MRP ran. What is the risk?",
+            options: ["The conversion will fail with an error","The production order uses the old scheduling, which may not reflect current work center loads","MRP automatically corrects the routing","The BOM is also reset to the old version"],
+            correct: 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "capacity-planning",
+    focusArea: "Capacity Planning",
+    icon: "⚙️",
+    topics: [
+      {
+        id: "work-centers",
+        title: "Work Centers and Capacity",
+        explanation: `A work center in SAP PP defines where an operation is performed. It holds the available capacity (shifts, hours, efficiency factor) and is the basis for scheduling and capacity requirements planning.\n\nCapacity is defined per work center as a capacity category (machine, labor). If a work center has no capacity defined, it won't appear in capacity evaluations — a common setup mistake.`,
+        questions: [
+          {
+            text: "Where is available capacity defined in SAP PP?",
+            options: ["In the routing header","In the material master MRP view","In the work center master data","In the production version"],
+            correct: 2
+          },
+          {
+            text: "A work center is not appearing in capacity evaluations. What is the most likely cause?",
+            options: ["The routing is missing an operation","No capacity category has been defined on the work center","The production order has not been released","MRP has not been run"],
+            correct: 1
+          },
+          {
+            text: "What does the efficiency factor on a work center affect?",
+            options: ["The cost of the production order","The available capacity hours used in scheduling","The BOM quantity of components","The goods receipt posting date"],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: "crp",
+        title: "Capacity Requirements Planning (CRP)",
+        explanation: `CRP calculates how much capacity is required at each work center based on open production orders and planned orders. It compares required capacity against available capacity and highlights overloads.\n\nCRP runs as part of MRP (if capacity planning is active) or separately via CM reports. The key transaction for evaluating work center loads is CM01. CRP does not automatically resolve overloads — that's the planner's job.`,
+        questions: [
+          {
+            text: "What is the primary purpose of CRP in SAP PP?",
+            options: ["To post goods movements for production orders","To compare required vs. available capacity at work centers","To convert planned orders automatically","To calculate safety stock levels"],
+            correct: 1
+          },
+          {
+            text: "Which transaction shows the capacity load for a specific work center?",
+            options: ["MD04","CO01","CM01","MB51"],
+            correct: 2
+          },
+          {
+            text: "CRP shows a work center overloaded next week. What does SAP do automatically?",
+            options: ["Delays the affected production orders","Creates additional work center capacity","Sends an alert to the production supervisor","Nothing — the planner must manually resolve the overload"],
+            correct: 3
+          }
+        ]
+      },
+      {
+        id: "capacity-leveling",
+        title: "Capacity Leveling",
+        explanation: `Capacity leveling is the process of resolving overloads identified by CRP. In SAP, this is done via the Planning Table (CM21/CM25) or the Graphical Planning Board. Planners can drag operations to different dates or work centers to balance load.\n\nChanges made during leveling update the production order scheduling directly. Capacity leveling requires understanding finite scheduling — infinite scheduling (the default) ignores overloads during MRP.`,
+        questions: [
+          {
+            text: "What is the difference between infinite and finite scheduling in MRP?",
+            options: ["Finite scheduling runs faster than infinite","Infinite scheduling respects work center capacity limits; finite does not","Infinite scheduling ignores capacity constraints; finite scheduling respects them","They produce identical results in most cases"],
+            correct: 2
+          },
+          {
+            text: "A planner moves an operation to a later date in CM21. What is the direct effect?",
+            options: ["The BOM is updated","The production order scheduling is updated","A new planned order is created","The work center capacity definition changes"],
+            correct: 1
+          },
+          {
+            text: "Which transaction is used for the graphical capacity planning table?",
+            options: ["MD04","CM01","CM21","CO41"],
+            correct: 2
+          }
+        ]
+      }
+    ]
+  }
+];
+
+const LABELS = ["A","B","C","D"];
+
+let state = {
+  currentFocus: null,
+  currentTopic: null,
+  currentQ: 0,
+  answers: [],
+  chosen: null,
+  revealed: false
+};
+
+function showScreen(name) {
+  ["focus","topic","explain","quiz","result"].forEach(s => {
+    document.getElementById("screen-" + s).classList.toggle("hidden", s !== name);
+  });
+  if (name === "focus") renderFocus();
+  if (name === "topic") renderTopics();
+}
+
+function renderFocus() {
+  const el = document.getElementById("focus-cards");
+  el.innerHTML = DATA.map(f => `
+    <div class="card" onclick="selectFocus('${f.id}')">
+      <div class="card-icon">${f.icon}</div>
+      <div>
+        <div class="card-title">${f.focusArea}</div>
+        <div class="card-sub">${f.topics.length} topics · ${f.topics.length * 3} questions</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function selectFocus(id) {
+  state.currentFocus = DATA.find(f => f.id === id);
+  showScreen("topic");
+}
+
+function renderTopics() {
+  document.getElementById("topic-focus-label").textContent = state.currentFocus.focusArea;
+  const el = document.getElementById("topic-cards");
+  el.innerHTML = state.currentFocus.topics.map(t => `
+    <div class="card" onclick="selectTopic('${t.id}')">
+      <div class="card-icon-arrow">▸</div>
+      <div>
+        <div class="card-title">${t.title}</div>
+        <div class="card-sub">3 questions</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function selectTopic(id) {
+  state.currentTopic = state.currentFocus.topics.find(t => t.id === id);
+  document.getElementById("explain-label").textContent = state.currentFocus.focusArea + " · Explanation";
+  document.getElementById("explain-title").textContent = state.currentTopic.title;
+  document.getElementById("explain-text").textContent = state.currentTopic.explanation;
+  showScreen("explain");
+}
+
+function startQuiz() {
+  state.currentQ = 0;
+  state.answers = [];
+  state.chosen = null;
+  state.revealed = false;
+  renderQuestion();
+  showScreen("quiz");
+}
+
+function renderQuestion() {
+  const q = state.currentTopic.questions[state.currentQ];
+  document.getElementById("quiz-label").textContent = state.currentTopic.title;
+  document.getElementById("quiz-question-num").textContent = `Question ${state.currentQ + 1} of 3`;
+
+  [0,1,2].forEach(i => {
+    const pip = document.getElementById("pip-" + i);
+    pip.className = "pip" + (i < state.currentQ ? " done" : i === state.currentQ ? " active" : "");
+  });
+
+  document.getElementById("quiz-question-text").textContent = q.text;
+
+  const optEl = document.getElementById("quiz-options");
+  optEl.innerHTML = q.options.map((opt, idx) => `
+    <div class="option" id="opt-${idx}" onclick="handleAnswer(${idx})">
+      <div class="opt-label">${LABELS[idx]}</div>
+      <div class="opt-text">${opt}</div>
+    </div>
+  `).join("");
+
+  document.getElementById("next-row").classList.add("hidden");
+  document.getElementById("next-btn").textContent = state.currentQ < 2 ? "Next →" : "See Results →";
+}
+
+function handleAnswer(idx) {
+  if (state.revealed) return;
+  state.chosen = idx;
+  state.revealed = true;
+
+  const q = state.currentTopic.questions[state.currentQ];
+  for (let i = 0; i < q.options.length; i++) {
+    const el = document.getElementById("opt-" + i);
+    el.classList.add("revealed");
+    if (i === q.correct) el.classList.add("correct");
+    else if (i === idx && i !== q.correct) el.classList.add("wrong");
+  }
+  document.getElementById("next-row").classList.remove("hidden");
+}
+
+function nextQuestion() {
+  const q = state.currentTopic.questions[state.currentQ];
+  state.answers.push({ correct: state.chosen === q.correct });
+  state.revealed = false;
+  state.chosen = null;
+
+  if (state.currentQ < 2) {
+    state.currentQ++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  const score = state.answers.filter(a => a.correct).length;
+  const msgs = [
+    "Review the explanation and try again.",
+    "Decent start. Worth a second pass.",
+    "Solid. You know this topic.",
+    "Perfect score. Well done."
+  ];
+  document.getElementById("result-label").textContent =
+    state.currentFocus.focusArea + " · " + state.currentTopic.title;
+  document.getElementById("result-score").textContent = score + "/3";
+  document.getElementById("result-msg").textContent = msgs[score];
+  showScreen("result");
+}
+
+// Init
+renderFocus();
+</script>
+</body>
+</html>
